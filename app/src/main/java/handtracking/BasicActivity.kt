@@ -41,7 +41,7 @@ open class BasicActivity : AppCompatActivity() {
         const val INPUT_VIDEO_STREAM_NAME = "input_video"
         const val OUTPUT_VIDEO_STREAM_NAME = "output_video"
         const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
-        val CAMERA_FACING = CameraHelper.CameraFacing.FRONT
+        var CAMERA_FACING = CameraHelper.CameraFacing.FRONT
     }
 
     init {
@@ -141,21 +141,13 @@ open class BasicActivity : AppCompatActivity() {
     fun startCamera() {
         cameraHelper = CameraXPreviewHelper()
         cameraHelper.setOnCameraStartedListener { surfaceTexture ->
-
             val viewGroup = previewDisplayView.parent as ViewGroup
             viewGroup.removeView(previewDisplayView)
             viewGroup.addView(previewDisplayView)
-// added
-            // added
             previewFrameTexture = surfaceTexture
-            // Make the display view visible to start showing the preview. This triggers the
-            // SurfaceHolder.Callback added to (the holder of) previewDisplayView.
-            // Make the display view visible to start showing the preview. This triggers the
-            // SurfaceHolder.Callback added to (the holder of) previewDisplayView.
             previewDisplayView.visibility = View.VISIBLE
-//            previewFrameTexture = surfaceTexture
-//            previewDisplayView.visibility = View.VISIBLE
         }
+        println(CAMERA_FACING)
         cameraHelper.startCamera(this, CAMERA_FACING,  /*surfaceTexture=*/null)
 
 //        cameraHelper!!.startCamera(

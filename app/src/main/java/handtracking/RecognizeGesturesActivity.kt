@@ -2,19 +2,62 @@ package handtracking
 
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.WindowManager
+import androidx.camera.core.CameraX
+import androidx.core.view.GestureDetectorCompat
+import com.google.mediapipe.components.CameraHelper
 import com.google.mediapipe.formats.proto.LandmarkProto
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmarkList
 import com.google.mediapipe.formats.proto.RectProto
 import com.google.mediapipe.framework.PacketGetter
 
-class RecognizeGesturesActivity : BasicActivity() {
+class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapListener, GestureDetector.OnGestureListener {
 
     companion object {
         private const val TAG = "RecognizeGestures"
         private const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
         private const val OUTPUT_HAND_RECT = "multi_hand_rects"
     }
+
+    private lateinit var mDetector: GestureDetectorCompat
+
+    override fun onDoubleTap(event: MotionEvent): Boolean {
+        Log.d("XD", "onDoubleTap: $event")
+        CAMERA_FACING =
+                if (CAMERA_FACING == CameraHelper.CameraFacing.BACK) CameraHelper.CameraFacing.FRONT
+                else CameraHelper.CameraFacing.BACK
+        CameraX.unbindAll()
+        startCamera()
+        return true
+    }
+
+    override fun onDoubleTapEvent(event: MotionEvent) = true
+
+    override fun onTouchEvent(event: MotionEvent) = if (mDetector.onTouchEvent(event)) true
+    else super.onTouchEvent(event)
+
+    override fun onDown(event: MotionEvent) = true
+    override fun onFling(
+            event1: MotionEvent,
+            event2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+    ) = true
+
+    override fun onLongPress(event: MotionEvent) = Unit
+
+    override fun onScroll(
+            event1: MotionEvent,
+            event2: MotionEvent,
+            distanceX: Float,
+            distanceY: Float
+    ) = true
+
+    override fun onShowPress(event: MotionEvent) = Unit
+    override fun onSingleTapUp(event: MotionEvent) = true
+    override fun onSingleTapConfirmed(event: MotionEvent) = true
 
     private var multiHandLandmarks: List<NormalizedLandmarkList>? = null
 
@@ -35,6 +78,10 @@ class RecognizeGesturesActivity : BasicActivity() {
                     ?: "..."
             previewDisplayView.invalidate()
         }
+        mDetector = GestureDetectorCompat(this, this)
+        // Set the gesture detector as the double tap
+        // listener.
+        mDetector.setOnDoubleTapListener(this)
     }
 
     private fun getMultiHandLandmarksDebugString(multiHandLandmarks: List<NormalizedLandmarkList>?): String {
