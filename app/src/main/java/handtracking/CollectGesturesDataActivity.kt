@@ -1,5 +1,7 @@
 package handtracking
 
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.graphics.SurfaceTexture
 import android.os.Bundle
 import android.os.Handler
@@ -48,6 +50,9 @@ class CollectGesturesDataActivity : AppCompatActivity() {
     // Handles camera access via the {@link CameraX} Jetpack support library.
     private lateinit var cameraHelper: CameraXPreviewHelper
 
+    // ApplicationInfo for retrieving metadata defined in the manifest.
+    private var appInfo: ApplicationInfo? = null
+
     private var gestureName = "test"
     private var gestureData =
             "time, hand, L1x, L1y, L1z, L2x, L2y, L2z, L3x, L3y, L3z, L4x, L4y, L4z, L5x, L5y, L5z, L6x, L6y, L6z, L7x, L7y, L7z" +
@@ -93,6 +98,11 @@ class CollectGesturesDataActivity : AppCompatActivity() {
         previewDisplayView = CameraOverlaySurfaceView(this)
         createTimeHandler()
         setupPreviewDisplayView()
+        try {
+            appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.e(BasicActivity.TAG, "Cannot find application info: $e")
+        }
         // Initialize asset manager so that MediaPipe native libraries can access the app assets, e.g.,
         // binary graphs.
         saveButton.setOnClickListener {
@@ -103,9 +113,9 @@ class CollectGesturesDataActivity : AppCompatActivity() {
         processor = FrameProcessor(
                 this,
                 eglManager.nativeContext,
-                BINARY_GRAPH_NAME,
-                INPUT_VIDEO_STREAM_NAME,
-                OUTPUT_VIDEO_STREAM_NAME)
+                appInfo!!.metaData.getString("binaryGraphName"),
+                appInfo!!.metaData.getString("inputVideoStreamName"),
+                appInfo!!.metaData.getString("outputVideoStreamName"))
         processor.videoSurfaceOutput.setFlipY(FLIP_FRAMES_VERTICALLY)
         processor.addPacketCallback(
                 OUTPUT_LANDMARKS_STREAM_NAME

@@ -11,6 +11,7 @@ class CameraOverlaySurfaceView(
 ) : SurfaceView(ctx) {
 
     var text: String = ""
+    var movedGesture: String = ""
 
     init {
         setWillNotDraw(false)
@@ -22,5 +23,6 @@ class CameraOverlaySurfaceView(
         paint.textSize = 100.0f // za duze
         paint.textAlign = Paint.Align.CENTER
         canv.drawText(text, 450.0f, 1605.0f, paint) //zle rozmieszczone
+        canv.drawText(movedGesture, 450.0f, 1705.0f, paint) //zle rozmieszczone
     }
 }

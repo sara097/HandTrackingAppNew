@@ -16,6 +16,7 @@ import com.google.mediapipe.components.*
 import com.google.mediapipe.framework.AndroidAssetUtil
 import com.google.mediapipe.glutil.EglManager
 
+
 // Copyright 2019 The MediaPipe Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -109,6 +110,7 @@ open class BasicActivity : AppCompatActivity() {
         PermissionHelper.checkAndRequestCameraPermissions(this)
     }
 
+
     override fun onResume() {
         super.onResume()
         converter = ExternalTextureConverter(eglManager.context)
@@ -138,9 +140,21 @@ open class BasicActivity : AppCompatActivity() {
 
     fun startCamera() {
         cameraHelper = CameraXPreviewHelper()
-        cameraHelper.setOnCameraStartedListener { surfaceTexture: SurfaceTexture? ->
+        cameraHelper.setOnCameraStartedListener { surfaceTexture ->
+
+            val viewGroup = previewDisplayView.parent as ViewGroup
+            viewGroup.removeView(previewDisplayView)
+            viewGroup.addView(previewDisplayView)
+// added
+            // added
             previewFrameTexture = surfaceTexture
+            // Make the display view visible to start showing the preview. This triggers the
+            // SurfaceHolder.Callback added to (the holder of) previewDisplayView.
+            // Make the display view visible to start showing the preview. This triggers the
+            // SurfaceHolder.Callback added to (the holder of) previewDisplayView.
             previewDisplayView.visibility = View.VISIBLE
+//            previewFrameTexture = surfaceTexture
+//            previewDisplayView.visibility = View.VISIBLE
         }
         cameraHelper.startCamera(this, CAMERA_FACING,  /*surfaceTexture=*/null)
 

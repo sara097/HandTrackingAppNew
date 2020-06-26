@@ -3,7 +3,6 @@ package handtracking
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
-import android.widget.TextView
 import com.google.mediapipe.formats.proto.LandmarkProto
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmarkList
 import com.google.mediapipe.formats.proto.RectProto
@@ -17,9 +16,7 @@ class RecognizeGesturesActivity : BasicActivity() {
         private const val OUTPUT_HAND_RECT = "multi_hand_rects"
     }
 
-    private lateinit var multiHandLandmarks: List<NormalizedLandmarkList>
-    private lateinit var gesture: TextView
-    private lateinit var moveGesture: TextView
+    private var multiHandLandmarks: List<NormalizedLandmarkList>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,23 +25,20 @@ class RecognizeGesturesActivity : BasicActivity() {
             Log.d(TAG, "Received multi-hand landmarks packet.")
             multiHandLandmarks = PacketGetter.getProtoVector(packet, NormalizedLandmarkList.parser())
             Log.d(TAG, "[TS:" + packet.timestamp + "] " + getMultiHandLandmarksDebugString(multiHandLandmarks))
-            previewDisplayView.text = handGestureCalculator(multiHandLandmarks) ?: "Cannot recognize."
+            previewDisplayView.text = handGestureCalculator(multiHandLandmarks)
+                    ?: "Cannot recognize."
             previewDisplayView.invalidate()
         }
-//        processor.addPacketCallback(OUTPUT_HAND_RECT ){ packet ->
-//            val normalizedRectsList: List<RectProto.NormalizedRect> = PacketGetter.getProtoVector(packet, RectProto.NormalizedRect.parser())
-//            try {
-//                runOnUiThread {
-//                    // moveGesture.setText(handGestureMoveCalculator(normalizedRectsList));
-//                }
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
+        processor.addPacketCallback(OUTPUT_HAND_RECT) { packet ->
+            val normalizedRectsList: List<RectProto.NormalizedRect> = PacketGetter.getProtoVector(packet, RectProto.NormalizedRect.parser())
+            previewDisplayView.movedGesture = handGestureMoveCalculator(normalizedRectsList)
+                    ?: "..."
+            previewDisplayView.invalidate()
+        }
     }
 
-    private fun getMultiHandLandmarksDebugString(multiHandLandmarks: List<NormalizedLandmarkList>): String {
-        if (multiHandLandmarks.isEmpty()) return "No hand landmarks"
+    private fun getMultiHandLandmarksDebugString(multiHandLandmarks: List<NormalizedLandmarkList>?): String {
+        if (multiHandLandmarks == null || multiHandLandmarks.isEmpty()) return "No hand landmarks"
         var multiHandLandmarksStr = """Number of hands detected: ${multiHandLandmarks.size}""".trimIndent()
         for ((handIndex, landmarks) in multiHandLandmarks.withIndex()) {
 
@@ -55,17 +49,18 @@ class RecognizeGesturesActivity : BasicActivity() {
         return multiHandLandmarksStr
     }
 
-    private fun handGestureCalculator(multiHandLandmarks: List<NormalizedLandmarkList>): String? {
-        if (multiHandLandmarks.isEmpty()) return "No hand deal"
+    private fun handGestureCalculator(multiHandLandmarks: List<NormalizedLandmarkList>?): String? {
+        if (multiHandLandmarks == null || multiHandLandmarks.isEmpty()) return "No hand deal"
         //jesli są dwie zakładamy ze lewa i prawa
         //jesli jest jedna to tylko lewa.
         println(multiHandLandmarks.size)
 
-        val leftLandmarks = if(multiHandLandmarks.size>0) multiHandLandmarks[0].landmarkList else return "___"
+        val leftLandmarks = if (multiHandLandmarks.size > 0) multiHandLandmarks[0].landmarkList else return "___"
         println(multiHandLandmarks[0].landmarkCount)
-        val rightLandmarks = if(multiHandLandmarks.size>1) multiHandLandmarks[1].landmarkList else null
-        if(leftLandmarks.size<21) return "X"
+        val rightLandmarks = if (multiHandLandmarks.size > 1) multiHandLandmarks[1].landmarkList else null
+        if (leftLandmarks.size < 21) return "X"
         val leftSign = leftGestureCalculation(leftLandmarks)
+
         if(rightLandmarks != null){
             val rightSign = rightGestureCalculation(rightLandmarks)
             return when{
@@ -153,10 +148,11 @@ class RecognizeGesturesActivity : BasicActivity() {
     var frameCounter = false
 
     private fun handGestureMoveCalculator(normalizedRectList: List<RectProto.NormalizedRect>): String? {
-        val normalizedRect= normalizedRectList[0]
-        val height: Float = normalizedRect.getHeight()
-        val centerX: Float = normalizedRect.getXCenter()
-        val centerY: Float = normalizedRect.getYCenter()
+        if (normalizedRectList.isEmpty()) return "*"
+        val normalizedRect = normalizedRectList[0]
+        val height: Float = normalizedRect.height
+        val centerX: Float = normalizedRect.xCenter
+        val centerY: Float = normalizedRect.yCenter
         if (previousXCenter != 0f) {
             val mouvementDistance = GestureCalculationHelper.getEuclideanDistanceAB(centerX.toDouble(), centerY.toDouble(),
                     previousXCenter.toDouble(), previousYCenter.toDouble())
@@ -201,7 +197,7 @@ class RecognizeGesturesActivity : BasicActivity() {
         // each odd Frame is skipped. For a better result.
         frameCounter = !frameCounter
         if (frameCounter && multiHandLandmarks != null) {
-            for (landmarks in multiHandLandmarks) {
+            for (landmarks in multiHandLandmarks!!) {
                 val landmarkList = landmarks.landmarkList
                 val wrist = landmarkList[0]
                 val MCP_of_second_finger = landmarkList[9]
