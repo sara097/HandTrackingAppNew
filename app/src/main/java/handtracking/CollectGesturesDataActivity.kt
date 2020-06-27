@@ -181,6 +181,12 @@ class CollectGesturesDataActivity : AppCompatActivity() {
         cameraHelper.startCamera(this, CAMERA_FACING,  /*surfaceTexture=*/null)
     }
 
+    override fun onRequestPermissionsResult(
+            requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        PermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     private fun getMultiHandLandmarksDebugString(multiHandLandmarks: List<LandmarkProto.NormalizedLandmarkList>): String {
         if (multiHandLandmarks.isEmpty()) return "No hand landmarks"
 

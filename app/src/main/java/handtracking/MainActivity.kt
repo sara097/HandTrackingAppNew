@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         PermissionHelper.checkAndRequestCameraPermissions(this)
-        openBtn.isEnabled = PermissionHelper.cameraPermissionsGranted(this)
 
     }
 
