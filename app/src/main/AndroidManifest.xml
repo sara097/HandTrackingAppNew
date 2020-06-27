@@ -2,15 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.HandsTrackingApp">
 
-    <!-- For using the camera -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="requestLegacyExternalStorage" />
-    <!-- For MediaPipe -->
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="handtracking.CollectGesturesDataActivity"></activity>
+        <activity android:name="handtracking.DetailsSignActivity"></activity>
+        <activity android:name="handtracking.FeedbackActivity" />
+        <activity android:name="handtracking.GesturesListActivity" />
+        <activity android:name="handtracking.CollectGesturesDataActivity" />
         <activity
             android:name="handtracking.MainActivity"
             android:exported="true"
@@ -31,21 +25,39 @@
         </activity>
         <activity android:name="handtracking.BasicActivity" />
         <activity android:name="handtracking.RecognizeGesturesActivity" />
-        <meta-data android:name="cameraFacingFront" android:value="true"/>
-        <meta-data android:name="binaryGraphName" android:value="multi_hand_tracking_mobile_gpu.binarypb"/>
-        <meta-data android:name="inputVideoStreamName" android:value="input_video"/>
-        <meta-data android:name="outputVideoStreamName" android:value="output_video"/>
-        <meta-data android:name="flipFramesVertically" android:value="true"/>
-    </application>
-    <uses-feature android:name="android.hardware.camera.autofocus" />
 
+        <meta-data
+            android:name="cameraFacingFront"
+            android:value="true" />
+        <meta-data
+            android:name="binaryGraphName"
+            android:value="multi_hand_tracking_mobile_gpu.binarypb" />
+        <meta-data
+            android:name="inputVideoStreamName"
+            android:value="input_video" />
+        <meta-data
+            android:name="outputVideoStreamName"
+            android:value="output_video" />
+        <meta-data
+            android:name="flipFramesVertically"
+            android:value="true" />
+    </application>
+    <!-- For using the camera -->
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-    <uses-feature android:name="android.hardware.camera" /> <!-- For MediaPipe -->
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="requestLegacyExternalStorage" /> <!-- For MediaPipe -->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-sdk android:targetSdkVersion="29" />
-
 
 </manifest>

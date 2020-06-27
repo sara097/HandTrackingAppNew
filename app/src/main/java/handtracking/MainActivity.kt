@@ -30,6 +30,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        gesturesBtn.setOnClickListener {
+            val intent = Intent(this, GesturesListActivity::class.java)
+            startActivity(intent)
+        }
+
+        feedback_btn.setOnClickListener {
+            val intent = Intent(this, FeedbackActivity::class.java)
+            startActivity(intent)
+        }
+
         PermissionHelper.checkAndRequestCameraPermissions(this)
 
     }
