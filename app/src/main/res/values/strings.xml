@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">HandsTrackingApp</string>
+    <string name="app_name" translatable="false">Gesture Recognition</string>
     <string name="no_camera_access" translatable="false">Please grant camera permissions.</string>
 </resources>

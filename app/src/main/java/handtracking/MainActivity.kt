@@ -35,10 +35,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        feedback_btn.setOnClickListener {
-            val intent = Intent(this, FeedbackActivity::class.java)
-            startActivity(intent)
-        }
 
         PermissionHelper.checkAndRequestCameraPermissions(this)
 

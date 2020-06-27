@@ -2,14 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/main_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="handtracking.GesturesListActivity">
 
     <TextView
         android:id="@+id/info_txt"
-        android:layout_width="205dp"
-        android:layout_height="61dp"
+        android:layout_width="208dp"
+        android:layout_height="42dp"
+        android:fontFamily="@font/alegreya"
+        android:gravity="center_horizontal"
         android:text="Gestures list"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
