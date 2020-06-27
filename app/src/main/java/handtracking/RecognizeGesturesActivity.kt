@@ -12,6 +12,8 @@ import com.google.mediapipe.formats.proto.LandmarkProto
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmarkList
 import com.google.mediapipe.formats.proto.RectProto
 import com.google.mediapipe.framework.PacketGetter
+import kotlinx.android.synthetic.main.activity_recognize_gestures.*
+
 
 class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapListener, GestureDetector.OnGestureListener {
 
@@ -19,6 +21,7 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
         private const val TAG = "RecognizeGestures"
         private const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
         private const val OUTPUT_HAND_RECT = "multi_hand_rects"
+        var wordsLetters = "w"
     }
 
     private lateinit var mDetector: GestureDetectorCompat
@@ -37,13 +40,22 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        wlSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) wordsLetters = "l"
+            else wordsLetters = "w"
+        }
+
         processor.addPacketCallback(OUTPUT_LANDMARKS_STREAM_NAME) { packet ->
             Log.d(TAG, "Received multi-hand landmarks packet.")
             multiHandLandmarks = PacketGetter.getProtoVector(packet, NormalizedLandmarkList.parser())
             Log.d(TAG, "[TS:" + packet.timestamp + "] " + getMultiHandLandmarksDebugString(multiHandLandmarks))
-            val g = handGestureCalculator(multiHandLandmarks) ?: "___"
-            if (g != "___") gestureMoved = "..."
-            previewDisplayView.text = if (g == "___") gestureMoved else g
+            if (wordsLetters == "l") { //letters
+                previewDisplayView.text = handGestureCalculatorLetters(multiHandLandmarks) ?: "___"
+            } else {
+                val g = handGestureCalculator(multiHandLandmarks) ?: "___"
+                if (g != "___") gestureMoved = "..."
+                previewDisplayView.text = if (g == "___") gestureMoved else g
+            }
             previewDisplayView.invalidate()
         }
 //        processor.addPacketCallback(OUTPUT_HAND_RECT) { packet ->
@@ -72,12 +84,16 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
     var gestureParts = "" to ""
     var gestureMoved = ""
 
+    private fun handGestureCalculatorLetters(multiHandLandmarks: List<NormalizedLandmarkList>?): String? {
+        if (multiHandLandmarks == null || multiHandLandmarks.isEmpty()) return "No hand deal"
+        val leftLandmarks = if (multiHandLandmarks.size > 0) multiHandLandmarks[0].landmarkList else return "___"
+        if (leftLandmarks.size < 21) return "X"
+        val leftSign = GestureCalculation(leftLandmarks, "L").gestureCalculationLetters()
+        return leftSign
+    }
+
     private fun handGestureCalculator(multiHandLandmarks: List<NormalizedLandmarkList>?): String? {
         if (multiHandLandmarks == null || multiHandLandmarks.isEmpty()) return "No hand deal"
-        //jesli są dwie zakładamy ze lewa i prawa
-        //jesli jest jedna to tylko lewa.
-
-
         val leftLandmarks = if (multiHandLandmarks.size > 0) multiHandLandmarks[0].landmarkList else return "___"
         val rightLandmarks = if (multiHandLandmarks.size > 1) multiHandLandmarks[1].landmarkList else null
         if (leftLandmarks.size < 21) return "X"

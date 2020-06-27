@@ -38,6 +38,30 @@ class GestureCalculation (
             fourthFingerIsOpen = true
     }
 
+    fun gestureCalculationLetters(): String {
+        return when {
+            !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "A"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "B"
+            GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[8]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[20]) -> "C"
+            firstFingerIsOpen && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[8]) && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[20]) -> "D"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "H"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && !fourthFingerIsOpen -> "W"
+            thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "L"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "V"
+            thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "T"
+            thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen -> "Y"
+            !thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "G"
+            !firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[8]) -> "F"
+            else -> {
+                val info = ("thumbIsOpen " + thumbIsOpen + "firstFingerIsOpen" + firstFingerIsOpen
+                        + "secondFingerIsOpen" + secondFingerIsOpen +
+                        "thirdFingerIsOpen" + thirdFingerIsOpen + "fourthFingerIsOpen" + fourthFingerIsOpen)
+                Log.d("TAG", "handGestureCalculator: == $info")
+                "___"
+            }
+        }
+    }
+
     fun gestureCalculation(): String {
         return when {
             thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.isThumbNearFinger(landmarkList[8], landmarkList[12]) && !GestureCalculationHelper.isThumbNearFinger(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[16], landmarkList[20]) -> "Live long and prosper."
@@ -45,7 +69,7 @@ class GestureCalculation (
             thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Dwa"
             thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.isThumbNearFinger(landmarkList[8], landmarkList[12]) -> "Trzy"
             !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "Cztery"
-            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "Pięć"
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && !GestureCalculationHelper.isThumbNearFinger(landmarkList[8], landmarkList[12]) && !GestureCalculationHelper.isThumbNearFinger(landmarkList[12], landmarkList[16]) && !GestureCalculationHelper.isThumbNearFinger(landmarkList[16], landmarkList[20]) -> "Pięć"
             thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen -> "Źle"
             !thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Ołówek"
             !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.isThumbNearFinger(landmarkList[8], landmarkList[12]) -> "Toaleta"
@@ -63,8 +87,11 @@ class GestureCalculation (
 
     fun partGestureCalculation(): String {
         return when {
+            !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "goodbye_p_1"
             thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[8]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[8], landmarkList[12]) -> "no_p_1"
             thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[8]) && !GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[8], landmarkList[12]) -> "no_p_2"
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.isThumbNearFinger(landmarkList[8], landmarkList[12]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[16], landmarkList[20]) -> "goodbye_p_2"
+
             else -> ""
 
         }
@@ -72,14 +99,11 @@ class GestureCalculation (
 
     companion object {
         fun gestureFromParts(g: Pair<String, String>): String {
-            println("!")
-            println(g)
             val gest = when {
-                g.first == "no_p_1" && g.second == "no_p_2" -> "Nie"
+                (g.first == "no_p_1" && g.second == "no_p_2") || (g.first == "no_p_2" && g.second == "no_p_1") -> "Nie"
+                (g.first == "goodbye_p_1" && g.second == "goodbye_p_2") || (g.first == "goodbye_p_2" && g.second == "goodbye_p_1") -> "Do widzenia."
                 else -> "-"
             }
-            println(gest)
-            println("!")
             return gest
         }
     }
