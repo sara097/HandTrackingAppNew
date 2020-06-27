@@ -24,7 +24,6 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
     private lateinit var mDetector: GestureDetectorCompat
 
     override fun onDoubleTap(event: MotionEvent): Boolean {
-        Log.d("XD", "onDoubleTap: $event")
         CAMERA_FACING =
                 if (CAMERA_FACING == CameraHelper.CameraFacing.BACK) CameraHelper.CameraFacing.FRONT
                 else CameraHelper.CameraFacing.BACK
@@ -32,32 +31,6 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
         startCamera()
         return true
     }
-
-    override fun onDoubleTapEvent(event: MotionEvent) = true
-
-    override fun onTouchEvent(event: MotionEvent) = if (mDetector.onTouchEvent(event)) true
-    else super.onTouchEvent(event)
-
-    override fun onDown(event: MotionEvent) = true
-    override fun onFling(
-            event1: MotionEvent,
-            event2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-    ) = true
-
-    override fun onLongPress(event: MotionEvent) = Unit
-
-    override fun onScroll(
-            event1: MotionEvent,
-            event2: MotionEvent,
-            distanceX: Float,
-            distanceY: Float
-    ) = true
-
-    override fun onShowPress(event: MotionEvent) = Unit
-    override fun onSingleTapUp(event: MotionEvent) = true
-    override fun onSingleTapConfirmed(event: MotionEvent) = true
 
     private var multiHandLandmarks: List<NormalizedLandmarkList>? = null
 
@@ -68,19 +41,19 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
             Log.d(TAG, "Received multi-hand landmarks packet.")
             multiHandLandmarks = PacketGetter.getProtoVector(packet, NormalizedLandmarkList.parser())
             Log.d(TAG, "[TS:" + packet.timestamp + "] " + getMultiHandLandmarksDebugString(multiHandLandmarks))
-            previewDisplayView.text = handGestureCalculator(multiHandLandmarks)
-                    ?: "Cannot recognize."
+            val g = handGestureCalculator(multiHandLandmarks) ?: "___"
+            if (g != "___") gestureMoved = "..."
+            previewDisplayView.text = if (g == "___") gestureMoved else g
             previewDisplayView.invalidate()
         }
-        processor.addPacketCallback(OUTPUT_HAND_RECT) { packet ->
-            val normalizedRectsList: List<RectProto.NormalizedRect> = PacketGetter.getProtoVector(packet, RectProto.NormalizedRect.parser())
-            previewDisplayView.movedGesture = handGestureMoveCalculator(normalizedRectsList)
-                    ?: "..."
-            previewDisplayView.invalidate()
-        }
+//        processor.addPacketCallback(OUTPUT_HAND_RECT) { packet ->
+//            //val normalizedRectsList: List<RectProto.NormalizedRect> = PacketGetter.getProtoVector(packet, RectProto.NormalizedRect.parser())
+//            previewDisplayView.movedGesture = gestureMoved
+//                   // handGestureMoveCalculator(normalizedRectsList)
+//                   // ?: "..."
+//            previewDisplayView.invalidate()
+//        }
         mDetector = GestureDetectorCompat(this, this)
-        // Set the gesture detector as the double tap
-        // listener.
         mDetector.setOnDoubleTapListener(this)
     }
 
@@ -96,96 +69,47 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
         return multiHandLandmarksStr
     }
 
+    var gestureParts = "" to ""
+    var gestureMoved = ""
+
     private fun handGestureCalculator(multiHandLandmarks: List<NormalizedLandmarkList>?): String? {
         if (multiHandLandmarks == null || multiHandLandmarks.isEmpty()) return "No hand deal"
         //jesli są dwie zakładamy ze lewa i prawa
         //jesli jest jedna to tylko lewa.
-        println(multiHandLandmarks.size)
+
 
         val leftLandmarks = if (multiHandLandmarks.size > 0) multiHandLandmarks[0].landmarkList else return "___"
-        println(multiHandLandmarks[0].landmarkCount)
         val rightLandmarks = if (multiHandLandmarks.size > 1) multiHandLandmarks[1].landmarkList else null
         if (leftLandmarks.size < 21) return "X"
         val leftSign = leftGestureCalculation(leftLandmarks)
+        val g = GestureCalculation(leftLandmarks, "L").partGestureCalculation()
 
-        if(rightLandmarks != null){
+        if (g != "")
+            if (g != gestureParts.first) {
+                if (g != gestureParts.second && gestureParts.second != "") gestureParts = "" to ""
+                if (gestureParts.first != "" && gestureParts.second == "") gestureParts = gestureParts.first to g
+                if (gestureParts.first == "") gestureParts = g to ""
+                gestureMoved = GestureCalculation.gestureFromParts(gestureParts)
+            }
+
+        if (rightLandmarks != null) {
             val rightSign = rightGestureCalculation(rightLandmarks)
-            return when{
+            return when {
                 leftSign == "___" -> rightSign
                 rightSign == "___" -> leftSign
                 leftSign == "Jeden" && rightSign == "Pięć" -> "Sześć"
                 leftSign == "Dwa" && rightSign == "Pięć" -> "Siedem"
                 leftSign == "Trzy" && rightSign == "Pięć" -> "Osiem"
                 leftSign == "Cztery" && rightSign == "Pięć" -> "Dziewięć"
-                else ->  "___"
-        }
+                else -> "___"
+            }
         } else return leftSign
-//        for (landmarks in multiHandLandmarks) {
-//            val landmarkList = landmarks.landmarkList
-//            var pseudoFixKeyPoint = landmarkList[2].x
-//            if (pseudoFixKeyPoint < landmarkList[9].x)
-//                if (landmarkList[3].x < pseudoFixKeyPoint && landmarkList[4].x < pseudoFixKeyPoint)
-//                    thumbIsOpen = true
-//            if (pseudoFixKeyPoint > landmarkList[9].x)
-//                if (landmarkList[3].x > pseudoFixKeyPoint && landmarkList[4].x > pseudoFixKeyPoint)
-//                    thumbIsOpen = true
-////            Log.d(TAG, """
-////     pseudoFixKeyPoint == $pseudoFixKeyPoint
-////     landmarkList.get(2).getX() == ${landmarkList[2].x}
-////     landmarkList.get(4).getX() = ${landmarkList[4].x}
-////     """.trimIndent())
-//            pseudoFixKeyPoint = landmarkList[6].y
-//            if (landmarkList[7].y < pseudoFixKeyPoint && landmarkList[8].y < landmarkList[7].y)
-//                firstFingerIsOpen = true
-//            pseudoFixKeyPoint = landmarkList[10].y
-//            if (landmarkList[11].y < pseudoFixKeyPoint && landmarkList[12].y < landmarkList[11].y)
-//                secondFingerIsOpen = true
-//            pseudoFixKeyPoint = landmarkList[14].y
-//            if (landmarkList[15].y < pseudoFixKeyPoint && landmarkList[16].y < landmarkList[15].y)
-//                thirdFingerIsOpen = true
-//            pseudoFixKeyPoint = landmarkList[18].y
-//            if (landmarkList[19].y < pseudoFixKeyPoint && landmarkList[20].y < landmarkList[19].y)
-//                fourthFingerIsOpen = true
-//
-//            // Hand gesture recognition
-//            return when {
-//                thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Jeden"
-//                thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Dwa"
-//                thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Trzy"
-//                !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "Cztery"
-//                thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "Pięć"
-//                !thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen -> "Kocham Cię <3"
-//                GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[8]) && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && !firstFingerIsOpen -> "Dobrze!"
-////                !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "A"
-////                !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "B"
-////                GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[8]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[20]) -> "C"
-////                firstFingerIsOpen && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[8]) && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[20]) -> "D"
-////                !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "H"
-////                !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && !fourthFingerIsOpen -> "W"
-////                thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "L"
-////                !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "V"
-////                thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "T"
-////                thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen -> "Y"
-////                !thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "G"
-////                !firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.isThumbNearFinger(landmarkList[4], landmarkList[8]) -> "F"
-//                else -> {
-//                    val info = ("thumbIsOpen " + thumbIsOpen + "firstFingerIsOpen" + firstFingerIsOpen
-//                            + "secondFingerIsOpen" + secondFingerIsOpen +
-//                            "thirdFingerIsOpen" + thirdFingerIsOpen + "fourthFingerIsOpen" + fourthFingerIsOpen)
-//                    Log.d(TAG, "handGestureCalculator: == $info")
-//                    "___"
-//                }
-//
-//            }
-//        }
         return "___"
     }
 
-    fun leftGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String
-            = GestureCalculation(landmarkList, "L").gestureCalculation()
+    fun leftGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String = GestureCalculation(landmarkList, "L").gestureCalculation()
 
-    fun rightGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String
-            = GestureCalculation(landmarkList, "R").gestureCalculation()
+    fun rightGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String = GestureCalculation(landmarkList, "R").gestureCalculation()
 
     var previousXCenter = 0f
     var previousYCenter = 0f
@@ -203,16 +127,17 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
         if (previousXCenter != 0f) {
             val mouvementDistance = GestureCalculationHelper.getEuclideanDistanceAB(centerX.toDouble(), centerY.toDouble(),
                     previousXCenter.toDouble(), previousYCenter.toDouble())
-            // LOG(INFO) << "Distance: " << mouvementDistance;
             val mouvementDistanceFactor = 0.02 // only large mouvements will be recognized.
-
             // the height is normed [0.0, 1.0] to the camera window height.
             // so the mouvement (when the hand is near the camera) should be equivalent to the mouvement when the hand is far.
             val mouvementDistanceThreshold = mouvementDistanceFactor * height
             if (mouvementDistance > mouvementDistanceThreshold) {
-                val angle = GestureCalculationHelper.radianToDegree(GestureCalculationHelper.getAngleABC(centerX.toDouble(), centerY.toDouble(),
-                        previousXCenter.toDouble(), previousYCenter.toDouble(), previousXCenter + 0.1,
-                        previousYCenter.toDouble())).toDouble()
+                val angle = GestureCalculationHelper.radianToDegree(
+                        GestureCalculationHelper.getAngleABC
+                        (centerX.toDouble(), centerY.toDouble(),
+                                previousXCenter.toDouble(), previousYCenter.toDouble(), previousXCenter + 0.1,
+                                previousYCenter.toDouble()
+                        )).toDouble()
                 // LOG(INFO) << "Angle: " << angle;
                 if (angle >= -45 && angle < 45) {
                     return "Scrolling right"
@@ -230,7 +155,6 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
         // 2. FEATURE - Zoom in/out
         if (previousRectangleHeight != 0f) {
             val heightDifferenceFactor = 0.03
-
             // the height is normed [0.0, 1.0] to the camera window height.
             // so the mouvement (when the hand is near the camera) should be equivalent to the mouvement when the hand is far.
             val heightDifferenceThreshold = height * heightDifferenceFactor
@@ -256,7 +180,7 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
                 // LOG(INFO) << "Angle: " << ang_in_degree;
                 if (previousAngle != 0f) {
                     val angleDifferenceTreshold = 12.0
-                    if (previousAngle >= 80 && previousAngle <= 100) {
+                    if (previousAngle in 80.0..100.0) {
                         if (ang_in_degree > previousAngle + angleDifferenceTreshold) {
                             return "Slide left"
                         } else if (ang_in_degree < previousAngle - angleDifferenceTreshold) {
@@ -269,6 +193,16 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
         }
         return ""
     }
+
+    override fun onDoubleTapEvent(event: MotionEvent) = true
+    override fun onTouchEvent(event: MotionEvent) = if (mDetector.onTouchEvent(event)) true else super.onTouchEvent(event)
+    override fun onDown(event: MotionEvent) = true
+    override fun onFling(event1: MotionEvent, event2: MotionEvent, velocityX: Float, velocityY: Float) = true
+    override fun onLongPress(event: MotionEvent) = Unit
+    override fun onScroll(event1: MotionEvent, event2: MotionEvent, distanceX: Float, distanceY: Float) = true
+    override fun onShowPress(event: MotionEvent) = Unit
+    override fun onSingleTapUp(event: MotionEvent) = true
+    override fun onSingleTapConfirmed(event: MotionEvent) = true
 
 
 }
