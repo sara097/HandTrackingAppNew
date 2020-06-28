@@ -9,15 +9,14 @@
 
     <TextView
         android:id="@+id/gesture_name"
-        android:layout_width="221dp"
-        android:layout_height="63dp"
+        android:layout_width="249dp"
+        android:layout_height="79dp"
         android:layout_marginTop="56dp"
         android:fontFamily="@font/alegreya"
         android:text="TextView"
         android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.563"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,6 +32,6 @@
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gesture_name"
-        app:layout_constraintVertical_bias="0.59"
+        app:layout_constraintVertical_bias="0.48"
         tools:srcCompat="@tools:sample/avatars" />
 </androidx.constraintlayout.widget.ConstraintLayout>

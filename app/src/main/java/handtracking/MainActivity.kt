@@ -35,6 +35,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        feedback_btn.setOnClickListener {
+            val intent = Intent(this, RockPaperScissorsActivity::class.java)
+            startActivity(intent)
+        }
+
 
         PermissionHelper.checkAndRequestCameraPermissions(this)
 

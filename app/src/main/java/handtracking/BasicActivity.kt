@@ -37,10 +37,6 @@ open class BasicActivity : AppCompatActivity() {
     companion object {
         const val TAG = "BasicActivity"
         const val FLIP_FRAMES_VERTICALLY = true
-        const val BINARY_GRAPH_NAME = "multihandtrackinggpu.binarypb"
-        const val INPUT_VIDEO_STREAM_NAME = "input_video"
-        const val OUTPUT_VIDEO_STREAM_NAME = "output_video"
-        const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
         var CAMERA_FACING = CameraHelper.CameraFacing.FRONT
     }
 
@@ -96,17 +92,6 @@ open class BasicActivity : AppCompatActivity() {
                 appInfo!!.metaData.getString("inputVideoStreamName"),
                 appInfo!!.metaData.getString("outputVideoStreamName"))
         processor.videoSurfaceOutput.setFlipY(FLIP_FRAMES_VERTICALLY)
-
-//        processor = FrameProcessor(
-//                this,
-//                eglManager!!.nativeContext,
-//                appInfo!!.metaData.getString("binaryGraphName"),
-//                appInfo!!.metaData.getString("inputVideoStreamName"),
-//                appInfo!!.metaData.getString("outputVideoStreamName"))
-//        processor!!
-//                .videoSurfaceOutput
-//                .setFlipY(
-//                        applicationInfo!!.metaData.getBoolean("flipFramesVertically", FLIP_FRAMES_VERTICALLY))
         PermissionHelper.checkAndRequestCameraPermissions(this)
     }
 
@@ -115,11 +100,9 @@ open class BasicActivity : AppCompatActivity() {
         super.onResume()
         converter = ExternalTextureConverter(eglManager.context)
         converter.setFlipY(FLIP_FRAMES_VERTICALLY)
-        //applicationInfo!!.metaData.getBoolean("flipFramesVertically", FLIP_FRAMES_VERTICALLY))
         converter.setConsumer(processor)
         if (PermissionHelper.cameraPermissionsGranted(this))
             startCamera()
-
     }
 
     override fun onPause() {
@@ -133,11 +116,6 @@ open class BasicActivity : AppCompatActivity() {
         PermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-
-    protected fun cameraTargetResolution(): Size? {
-        return null // No preference and let the camera (helper) decide.
-    }
-
     fun startCamera() {
         cameraHelper = CameraXPreviewHelper()
         cameraHelper.setOnCameraStartedListener { surfaceTexture ->
@@ -147,34 +125,8 @@ open class BasicActivity : AppCompatActivity() {
             previewFrameTexture = surfaceTexture
             previewDisplayView.visibility = View.VISIBLE
         }
-        println(CAMERA_FACING)
         cameraHelper.startCamera(this, CAMERA_FACING,  /*surfaceTexture=*/null)
-
-//        cameraHelper!!.startCamera(
-//                this, cameraFacing,  /*surfaceTexture=*/null) //, cameraTargetResolution());
-    }
-
-    protected fun computeViewSize(width: Int, height: Int): Size {
-        return Size(width, height)
-    }
-
-//    protected fun onPreviewDisplaySurfaceChanged(
-//            holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-//        // (Re-)Compute the ideal size of the camera-preview display (the area that the
-//        // camera-preview frames get rendered onto, potentially with scaling and rotation)
-//        // based on the size of the SurfaceView that contains the display.
-//        val viewSize = computeViewSize(width, height)
-//        val displaySize = cameraHelper.computeDisplaySizeFromViewSize(viewSize)
-//        val isCameraRotated: Boolean = cameraHelper.isCameraRotated()
-//
-//        // Connect the converter to the camera-preview frames as its input (via
-//        // previewFrameTexture), and configure the output width and height as the computed
-//        // display size.
-//        converter.setSurfaceTextureAndAttachToGLContext(
-//                previewFrameTexture,
-//                if (isCameraRotated) displaySize.height else displaySize.width,
-//                if (isCameraRotated) displaySize.width else displaySize.height)
-//    }
+   }
 
     private fun setupPreviewDisplayView() {
         previewDisplayView.visibility = View.GONE
@@ -198,21 +150,6 @@ open class BasicActivity : AppCompatActivity() {
 
                     override fun surfaceDestroyed(holder: SurfaceHolder) = processor.videoSurfaceOutput.setSurface(null)
                 })
-//        previewDisplayView
-//                .getHolder()
-//                .addCallback(
-//                        object : SurfaceHolder.Callback {
-//                            override fun surfaceCreated(holder: SurfaceHolder) {
-//                                processor!!.videoSurfaceOutput.setSurface(holder.surface)
-//                            }
-//
-//                            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-//                                onPreviewDisplaySurfaceChanged(holder, format, width, height)
-//                            }
-//
-//                            override fun surfaceDestroyed(holder: SurfaceHolder) {
-//                                processor!!.videoSurfaceOutput.setSurface(null)
-//                            }
-//                        })
+
     }
 }

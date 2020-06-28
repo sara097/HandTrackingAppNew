@@ -9,8 +9,8 @@
 
     <Button
         android:id="@+id/openBtn2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="164dp"
+        android:layout_height="62dp"
         android:layout_marginTop="212dp"
         android:background="@drawable/button_background"
         android:fontFamily="@font/alegreya"
@@ -21,11 +21,11 @@
 
     <Button
         android:id="@+id/openBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save gestures"
-        android:fontFamily="@font/alegreya"
+        android:layout_width="120dp"
+        android:layout_height="55dp"
         android:background="@drawable/button_background"
+        android:fontFamily="@font/alegreya"
+        android:text="Save gestures"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -35,12 +35,12 @@
 
     <Button
         android:id="@+id/gesturesBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="117dp"
+        android:layout_height="50dp"
         android:layout_marginTop="48dp"
-        android:text="Gestures list"
-        android:fontFamily="@font/alegreya"
         android:background="@drawable/button_background"
+        android:fontFamily="@font/alegreya"
+        android:text="Gestures list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,12 +48,12 @@
 
     <Button
         android:id="@+id/feedback_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="159dp"
+        android:layout_height="51dp"
         android:layout_marginTop="44dp"
-        android:text="Give feedback"
-        android:fontFamily="@font/alegreya"
         android:background="@drawable/button_background"
+        android:fontFamily="@font/alegreya"
+        android:text="Rock, paper, scisros"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

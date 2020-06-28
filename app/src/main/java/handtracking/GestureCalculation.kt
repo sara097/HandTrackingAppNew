@@ -73,7 +73,7 @@ class GestureCalculation (
     fun gestureCalculation(): String {
         return when {
             thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) && !GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.areFingersNear(landmarkList[16], landmarkList[20]) -> "Live long and prosper."
-            thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[8]) && !GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) -> "Jeden"
+            thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Jeden"
             thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Dwa"
             thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) -> "Trzy"
             !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "Cztery"
@@ -101,18 +101,25 @@ class GestureCalculation (
             thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) && GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.areFingersNear(landmarkList[16], landmarkList[20]) -> "goodbye_p_2"
 
             else -> ""
+        }
+    }
 
+    fun rpsGestureCalculation(): String {
+        return when {
+            !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Rock!"
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "Paper!"
+            firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Scissors!"
+            else -> ""
         }
     }
 
     companion object {
         fun gestureFromParts(g: Pair<String, String>): String {
-            val gest = when {
+            return when {
                 (g.first == "no_p_1" && g.second == "no_p_2") || (g.first == "no_p_2" && g.second == "no_p_1") -> "Nie"
                 (g.first == "goodbye_p_1" && g.second == "goodbye_p_2") || (g.first == "goodbye_p_2" && g.second == "goodbye_p_1") -> "Do widzenia."
                 else -> "-"
             }
-            return gest
         }
     }
 

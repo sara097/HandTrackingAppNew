@@ -24,6 +24,7 @@
         </activity>
         <activity android:name="handtracking.BasicActivity" />
         <activity android:name="handtracking.RecognizeGesturesActivity" />
+        <activity android:name="handtracking.RockPaperScissorsActivity" />
 
         <meta-data
             android:name="cameraFacingFront"

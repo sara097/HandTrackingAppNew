@@ -10,7 +10,6 @@ import androidx.core.view.GestureDetectorCompat
 import com.google.mediapipe.components.CameraHelper
 import com.google.mediapipe.formats.proto.LandmarkProto
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmarkList
-import com.google.mediapipe.formats.proto.RectProto
 import com.google.mediapipe.framework.PacketGetter
 import kotlinx.android.synthetic.main.activity_recognize_gestures.*
 
@@ -58,13 +57,6 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
             }
             previewDisplayView.invalidate()
         }
-//        processor.addPacketCallback(OUTPUT_HAND_RECT) { packet ->
-//            //val normalizedRectsList: List<RectProto.NormalizedRect> = PacketGetter.getProtoVector(packet, RectProto.NormalizedRect.parser())
-//            previewDisplayView.movedGesture = gestureMoved
-//                   // handGestureMoveCalculator(normalizedRectsList)
-//                   // ?: "..."
-//            previewDisplayView.invalidate()
-//        }
         mDetector = GestureDetectorCompat(this, this)
         mDetector.setOnDoubleTapListener(this)
     }
@@ -93,7 +85,7 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
     }
 
     private fun handGestureCalculator(multiHandLandmarks: List<NormalizedLandmarkList>?): String? {
-        if (multiHandLandmarks == null || multiHandLandmarks.isEmpty()) return "No hand deal"
+        if (multiHandLandmarks == null || multiHandLandmarks.isEmpty()) return "-"
         val leftLandmarks = if (multiHandLandmarks.size > 0) multiHandLandmarks[0].landmarkList else return "___"
         val rightLandmarks = if (multiHandLandmarks.size > 1) multiHandLandmarks[1].landmarkList else null
         if (leftLandmarks.size < 21) return "X"
@@ -123,92 +115,9 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
         return "___"
     }
 
-    fun leftGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String = GestureCalculation(landmarkList, "L").gestureCalculation()
+    private fun leftGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String = GestureCalculation(landmarkList, "L").gestureCalculation()
 
-    fun rightGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String = GestureCalculation(landmarkList, "R").gestureCalculation()
-
-    var previousXCenter = 0f
-    var previousYCenter = 0f
-    var previousAngle = 0f// angle between the hand and the x-axis. in radian
-    var previous_rectangle_width = 0f
-    var previousRectangleHeight = 0f
-    var frameCounter = false
-
-    private fun handGestureMoveCalculator(normalizedRectList: List<RectProto.NormalizedRect>): String? {
-        if (normalizedRectList.isEmpty()) return "*"
-        val normalizedRect = normalizedRectList[0]
-        val height: Float = normalizedRect.height
-        val centerX: Float = normalizedRect.xCenter
-        val centerY: Float = normalizedRect.yCenter
-        if (previousXCenter != 0f) {
-            val mouvementDistance = GestureCalculationHelper.getEuclideanDistanceAB(centerX.toDouble(), centerY.toDouble(),
-                    previousXCenter.toDouble(), previousYCenter.toDouble())
-            val mouvementDistanceFactor = 0.02 // only large mouvements will be recognized.
-            // the height is normed [0.0, 1.0] to the camera window height.
-            // so the mouvement (when the hand is near the camera) should be equivalent to the mouvement when the hand is far.
-            val mouvementDistanceThreshold = mouvementDistanceFactor * height
-            if (mouvementDistance > mouvementDistanceThreshold) {
-                val angle = GestureCalculationHelper.radianToDegree(
-                        GestureCalculationHelper.getAngleABC
-                        (centerX.toDouble(), centerY.toDouble(),
-                                previousXCenter.toDouble(), previousYCenter.toDouble(), previousXCenter + 0.1,
-                                previousYCenter.toDouble()
-                        )).toDouble()
-                // LOG(INFO) << "Angle: " << angle;
-                if (angle >= -45 && angle < 45) {
-                    return "Scrolling right"
-                } else if (angle >= 45 && angle < 135) {
-                    return "Scrolling up"
-                } else if (angle >= 135 || angle < -135) {
-                    return "Scrolling left"
-                } else if (angle >= -135 && angle < -45) {
-                    return "Scrolling down"
-                }
-            }
-        }
-        previousXCenter = centerX
-        previousYCenter = centerY
-        // 2. FEATURE - Zoom in/out
-        if (previousRectangleHeight != 0f) {
-            val heightDifferenceFactor = 0.03
-            // the height is normed [0.0, 1.0] to the camera window height.
-            // so the mouvement (when the hand is near the camera) should be equivalent to the mouvement when the hand is far.
-            val heightDifferenceThreshold = height * heightDifferenceFactor
-            if (height < previousRectangleHeight - heightDifferenceThreshold) {
-                return "Zoom out"
-            } else if (height > previousRectangleHeight + heightDifferenceThreshold) {
-                return "Zoom in"
-            }
-        }
-        previousRectangleHeight = height
-        // each odd Frame is skipped. For a better result.
-        frameCounter = !frameCounter
-        if (frameCounter && multiHandLandmarks != null) {
-            for (landmarks in multiHandLandmarks!!) {
-                val landmarkList = landmarks.landmarkList
-                val wrist = landmarkList[0]
-                val MCP_of_second_finger = landmarkList[9]
-
-                // angle between the hand (wirst and MCP) and the x-axis.
-                val ang_in_radian = GestureCalculationHelper.getAngleABC(MCP_of_second_finger.x.toDouble(), MCP_of_second_finger.y.toDouble(),
-                        wrist.x.toDouble(), wrist.y.toDouble(), wrist.x + 0.1, wrist.y.toDouble())
-                val ang_in_degree = GestureCalculationHelper.radianToDegree(ang_in_radian)
-                // LOG(INFO) << "Angle: " << ang_in_degree;
-                if (previousAngle != 0f) {
-                    val angleDifferenceTreshold = 12.0
-                    if (previousAngle in 80.0..100.0) {
-                        if (ang_in_degree > previousAngle + angleDifferenceTreshold) {
-                            return "Slide left"
-                        } else if (ang_in_degree < previousAngle - angleDifferenceTreshold) {
-                            return "Slide right"
-                        }
-                    }
-                }
-                previousAngle = ang_in_degree.toFloat()
-            }
-        }
-        return ""
-    }
+    private fun rightGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String = GestureCalculation(landmarkList, "R").gestureCalculation()
 
     override fun onDoubleTapEvent(event: MotionEvent) = true
     override fun onTouchEvent(event: MotionEvent) = if (mDetector.onTouchEvent(event)) true else super.onTouchEvent(event)
