@@ -25,7 +25,7 @@ class RockPaperScissorsActivity : AppCompatActivity(), GestureDetector.OnDoubleT
         private const val TAG = "RecognizeGestures"
         private const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
         const val FLIP_FRAMES_VERTICALLY = true
-        var CAMERA_FACING = CameraHelper.CameraFacing.FRONT
+        var CAMERA_FACING = CameraHelper.CameraFacing.BACK
         var p1Score = 0
         var p2Score = 0
     }
@@ -118,14 +118,15 @@ class RockPaperScissorsActivity : AppCompatActivity(), GestureDetector.OnDoubleT
                 if (gestures != "X" to "X" || gestures != "" to "")
                     before = gestures
             }
-
         }
 
         mDetector = GestureDetectorCompat(this, this)
         mDetector.setOnDoubleTapListener(this)
+
+
     }
 
-    var before = "" to ""
+    private var before = "" to ""
 
     override fun onResume() {
         super.onResume()
@@ -150,7 +151,7 @@ class RockPaperScissorsActivity : AppCompatActivity(), GestureDetector.OnDoubleT
             previewFrameTexture = surfaceTexture
             previewDisplayView.visibility = View.VISIBLE
         }
-        cameraHelper.startCamera(this, BasicActivity.CAMERA_FACING,  /*surfaceTexture=*/null)
+        cameraHelper.startCamera(this, CAMERA_FACING,  /*surfaceTexture=*/null)
     }
 
     private fun setupPreviewDisplayView() {
