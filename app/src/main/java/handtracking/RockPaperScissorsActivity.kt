@@ -24,7 +24,6 @@ class RockPaperScissorsActivity : AppCompatActivity(), GestureDetector.OnDoubleT
     companion object {
         private const val TAG = "RecognizeGestures"
         private const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
-        const val FLIP_FRAMES_VERTICALLY = true
         var CAMERA_FACING = CameraHelper.CameraFacing.BACK
         var p1Score = 0
         var p2Score = 0
@@ -198,7 +197,7 @@ class RockPaperScissorsActivity : AppCompatActivity(), GestureDetector.OnDoubleT
     }
 
 
-    fun resultCalculation(res: Pair<String, String>): Pair<String, String?> {
+    private fun resultCalculation(res: Pair<String, String>): Pair<String, String?> {
         return when {
             res.first == "X" -> " " to null
             res.first == "" -> "Two players needed!" to null

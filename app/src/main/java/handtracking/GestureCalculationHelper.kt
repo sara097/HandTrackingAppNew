@@ -8,12 +8,12 @@ class GestureCalculationHelper {
 
     companion object{
 
-       fun areFingersNear(point1: NormalizedLandmark, point2: NormalizedLandmark): Boolean {
-            val distance = getEuclideanDistanceAB(point1.x.toDouble(), point1.y.toDouble(), point2.x.toDouble(), point2.y.toDouble())
-            return distance < 0.1
-        }
+       fun areFingersTouching(point1: NormalizedLandmark, point2: NormalizedLandmark): Boolean {
+           val distance = getEuclideanDistanceAB(point1.x.toDouble(), point1.y.toDouble(), point2.x.toDouble(), point2.y.toDouble())
+           return distance < 0.1
+       }
 
-        fun isThumbTouchingFinger(point1: NormalizedLandmark, point2: NormalizedLandmark): Boolean {
+        fun areFingersNear(point1: NormalizedLandmark, point2: NormalizedLandmark): Boolean {
             val distance = getEuclideanDistanceAB(point1.x.toDouble(), point1.y.toDouble(), point2.x.toDouble(), point2.y.toDouble())
             return distance < 0.5 && distance > 0.1
         }

@@ -19,7 +19,6 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
     companion object {
         private const val TAG = "RecognizeGestures"
         private const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
-        private const val OUTPUT_HAND_RECT = "multi_hand_rects"
         var wordsLetters = "w"
     }
 
@@ -100,9 +99,9 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
                 gestureMoved = GestureCalculation.gestureFromParts(gestureParts)
             }
 
-        if (rightLandmarks != null) {
+        return if (rightLandmarks != null) {
             val rightSign = rightGestureCalculation(rightLandmarks)
-            return when {
+            when {
                 leftSign == "___" -> rightSign
                 rightSign == "___" -> leftSign
                 leftSign == "Jeden" && rightSign == "Pięć" -> "Sześć"
@@ -111,8 +110,7 @@ class RecognizeGesturesActivity : BasicActivity(), GestureDetector.OnDoubleTapLi
                 leftSign == "Cztery" && rightSign == "Pięć" -> "Dziewięć"
                 else -> "___"
             }
-        } else return leftSign
-        return "___"
+        } else leftSign
     }
 
     private fun leftGestureCalculation(landmarkList: List<LandmarkProto.NormalizedLandmark>): String = GestureCalculation(landmarkList, "L").gestureCalculation()

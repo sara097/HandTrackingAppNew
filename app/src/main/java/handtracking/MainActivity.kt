@@ -29,20 +29,15 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
         gesturesBtn.setOnClickListener {
             val intent = Intent(this, GesturesListActivity::class.java)
             startActivity(intent)
         }
-
         feedback_btn.setOnClickListener {
             val intent = Intent(this, RockPaperScissorsActivity::class.java)
             startActivity(intent)
         }
-
-
         PermissionHelper.checkAndRequestCameraPermissions(this)
-
     }
 
     override fun onRequestPermissionsResult(

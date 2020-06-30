@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.view.SurfaceView
 
-open class CameraOverlaySurfaceView(
+class CameraOverlaySurfaceView(
         ctx: Context
 ) : SurfaceView(ctx) {
 
@@ -20,9 +20,9 @@ open class CameraOverlaySurfaceView(
     override fun onDraw(canv: Canvas) {
         val paint = Paint()
         paint.color = Color.WHITE
-        paint.textSize = 100.0f // za duze
+        paint.textSize = 100.0f
         paint.textAlign = Paint.Align.CENTER
-        canv.drawText(text, 460.0f, 1405.0f, paint) //zle rozmieszczone
-        canv.drawText(movedGesture, 460.0f, 1505.0f, paint) //zle rozmieszczone
+        canv.drawText(text, 460.0f, 1405.0f, paint)
+        canv.drawText(movedGesture, 460.0f, 1505.0f, paint)
     }
 }

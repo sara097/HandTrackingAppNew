@@ -43,18 +43,18 @@ class GestureCalculation (
 
             !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "B"
             thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen -> "Y"
-            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && landmarkList[8].x < landmarkList[12].x && GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[8])-> "R"
-            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen  && GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[8])&& landmarkList[8].x > landmarkList[12].x-> "U"
-            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen  && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[12], landmarkList[8])-> "V"
-            !thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && landmarkList[8].y > 0.6-> "G"
-            !secondFingerIsOpen && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[8]) && landmarkList[8].y > 0.4 && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.isThumbTouchingFinger(landmarkList[4], landmarkList[20])-> "C"
-            thumbIsOpen && firstFingerIsOpen  && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[12])&& landmarkList[8].x >= 0.35 && landmarkList[12].y >= 0.48 && landmarkList[16].y >= 0.48 && landmarkList[20].y >= 0.48 -> "D"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && landmarkList[8].x < landmarkList[12].x && GestureCalculationHelper.areFingersTouching(landmarkList[12], landmarkList[8]) -> "R"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersTouching(landmarkList[12], landmarkList[8]) && landmarkList[8].x > landmarkList[12].x -> "U"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[8]) -> "V"
+            !thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && landmarkList[8].y > 0.6 -> "G"
+            !secondFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[8]) && landmarkList[8].y > 0.4 && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[20]) -> "C"
+            thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[12]) && landmarkList[8].x >= 0.35 && landmarkList[12].y >= 0.48 && landmarkList[16].y >= 0.48 && landmarkList[20].y >= 0.48 -> "D"
             !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "E"
-            !firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[8]) -> "F"
-            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && landmarkList[8].y> 0.6 -> "H"
-            !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen && landmarkList[20].y<=0.5-> "I"
-            !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen && landmarkList[20].y>0.5-> "J"
-            GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[8]) && landmarkList[8].y > 0.4 && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[20])-> "O"
+            !firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[8]) -> "F"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && landmarkList[8].y > 0.6 -> "H"
+            !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen && landmarkList[20].y <= 0.5 -> "I"
+            !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen && landmarkList[20].y > 0.5 -> "J"
+            GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[8]) && landmarkList[8].y > 0.4 && GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[16]) && GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[20]) -> "O"
             thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "A"
             !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && !fourthFingerIsOpen -> "W"
             thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "L"
@@ -72,17 +72,17 @@ class GestureCalculation (
 
     fun gestureCalculation(): String {
         return when {
-            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) && !GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.areFingersNear(landmarkList[16], landmarkList[20]) -> "Live long and prosper."
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersTouching(landmarkList[8], landmarkList[12]) && !GestureCalculationHelper.areFingersTouching(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.areFingersTouching(landmarkList[16], landmarkList[20]) -> "Live long and prosper."
             thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Jeden"
             thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Dwa"
-            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) -> "Trzy"
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.areFingersTouching(landmarkList[8], landmarkList[12]) -> "Trzy"
             !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen -> "Cztery"
-            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && !GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) && !GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[16]) && !GestureCalculationHelper.areFingersNear(landmarkList[16], landmarkList[20]) -> "Pięć"
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && !GestureCalculationHelper.areFingersTouching(landmarkList[8], landmarkList[12]) && !GestureCalculationHelper.areFingersTouching(landmarkList[12], landmarkList[16]) && !GestureCalculationHelper.areFingersTouching(landmarkList[16], landmarkList[20]) -> "Pięć"
             thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen -> "Źle"
             !thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "Ołówek"
-            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) -> "Toaleta"
+            !thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersTouching(landmarkList[8], landmarkList[12]) -> "Toaleta"
             thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen -> "Kocham Cię"
-            GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[8]) && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && !firstFingerIsOpen -> "Dobrze!"
+            GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[8]) && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && !firstFingerIsOpen -> "Dobrze!"
             else -> {
                 val info = ("thumbIsOpen " + thumbIsOpen + "firstFingerIsOpen" + firstFingerIsOpen
                         + "secondFingerIsOpen" + secondFingerIsOpen +
@@ -96,10 +96,9 @@ class GestureCalculation (
     fun partGestureCalculation(): String {
         return when {
             !thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen -> "goodbye_p_1"
-            thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[8]) && GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) -> "no_p_1"
-            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[8]) && !GestureCalculationHelper.areFingersNear(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) -> "no_p_2"
-            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersNear(landmarkList[8], landmarkList[12]) && GestureCalculationHelper.areFingersNear(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.areFingersNear(landmarkList[16], landmarkList[20]) -> "goodbye_p_2"
-
+            thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[8]) && GestureCalculationHelper.areFingersTouching(landmarkList[8], landmarkList[12]) -> "no_p_1"
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && !GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[8]) && !GestureCalculationHelper.areFingersTouching(landmarkList[4], landmarkList[12]) && GestureCalculationHelper.areFingersTouching(landmarkList[8], landmarkList[12]) -> "no_p_2"
+            thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && GestureCalculationHelper.areFingersTouching(landmarkList[8], landmarkList[12]) && GestureCalculationHelper.areFingersTouching(landmarkList[12], landmarkList[16]) && GestureCalculationHelper.areFingersTouching(landmarkList[16], landmarkList[20]) -> "goodbye_p_2"
             else -> ""
         }
     }

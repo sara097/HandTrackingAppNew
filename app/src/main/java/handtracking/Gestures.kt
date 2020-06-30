@@ -15,28 +15,13 @@ enum class Gestures(
     H("h", "H", com.example.HandsTrackingApp.R.drawable.h),
     I("i", "I", com.example.HandsTrackingApp.R.drawable.i),
     J("j", "J", com.example.HandsTrackingApp.R.drawable.j),
-
-    //K("k", "K", com.example.HandsTrackingApp.R.drawable.k),
     L("l", "L", com.example.HandsTrackingApp.R.drawable.l),
-
-    //M("m", "M", com.example.HandsTrackingApp.R.drawable.m),
-    //N("n", "N", com.example.HandsTrackingApp.R.drawable.n),
     O("o", "O", com.example.HandsTrackingApp.R.drawable.o),
-
-    //P("p", "P", com.example.HandsTrackingApp.R.drawable.p),
-    //Q("q", "Q", com.example.HandsTrackingApp.R.drawable.q),
     R("r", "R", com.example.HandsTrackingApp.R.drawable.r),
-
-    //S("s", "S", com.example.HandsTrackingApp.R.drawable.s),
-    //T("t", "T", com.example.HandsTrackingApp.R.drawable.t),
     U("u", "U", com.example.HandsTrackingApp.R.drawable.u),
     V("v", "V", com.example.HandsTrackingApp.R.drawable.v),
     W("w", "W", com.example.HandsTrackingApp.R.drawable.w),
-
-    //X("x", "X", com.example.HandsTrackingApp.R.drawable.x),
     Y("y", "Y", com.example.HandsTrackingApp.R.drawable.y),
-
-    //Z("z", "Z", com.example.HandsTrackingApp.R.drawable.z),
     LIVE_LONG("live_long", "Live long and prosper.", com.example.HandsTrackingApp.R.drawable.live_long),
     ONE("one", "One", com.example.HandsTrackingApp.R.drawable.one),
     TWO("two", "Two", com.example.HandsTrackingApp.R.drawable.two),

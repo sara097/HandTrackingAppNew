@@ -61,10 +61,9 @@ class CollectGesturesDataActivity : AppCompatActivity() {
                     ", L20x, L20y, L20z, L21x, L21y, L21z\n" //3 sekundy na gest i spytac o nazwe gestu....
     private val handler = Handler()
     private var saveFlag = false
-    private var collectFlag = false;
-    private var timeElapsed = 0;
-    private val interval = 1000;
-    private val time = 4000;
+    private var collectFlag = false
+    private var timeElapsed = 0
+    private val interval = 1000
 
     private fun createTimeHandler() {
         handler.postDelayed(object : Runnable {
@@ -194,7 +193,6 @@ class CollectGesturesDataActivity : AppCompatActivity() {
             Number of hands detected: ${multiHandLandmarks.size}
             """.trimIndent()
 
-        //Tylko dwie dłonie nas interesują. Póki co.
         var textToSave = ""
         for ((handIndex, landmarks) in multiHandLandmarks.withIndex()) {
             multiHandLandmarksStr += """	#Hand landmarks for hand[$handIndex]: ${landmarks.landmarkCount}"""
@@ -210,17 +208,9 @@ class CollectGesturesDataActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "MainActivity"
-        private const val BINARY_GRAPH_NAME = "multihandtrackinggpu.binarypb"
-        private const val INPUT_VIDEO_STREAM_NAME = "input_video"
-        private const val OUTPUT_VIDEO_STREAM_NAME = "output_video"
+        private const val TAG = "Activity"
         private const val OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks"
         private val CAMERA_FACING = CameraHelper.CameraFacing.FRONT
-
-        // Flips the camera-preview frames vertically before sending them into FrameProcessor to be
-        // processed in a MediaPipe graph, and flips the processed frames back when they are displayed.
-        // This is needed because OpenGL represents images assuming the image origin is at the bottom-left
-        // corner, whereas MediaPipe in general assumes the image origin is at top-left.
         private const val FLIP_FRAMES_VERTICALLY = true
     }
 
